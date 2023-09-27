@@ -464,6 +464,30 @@ root@debian:~# lvs -a -o name,copy_percent,devices debian-vg
   [root_rmeta_1]           /dev/sda1(0)
 ```
 
+### 電源が落ちてディスクが故障したとき
+
+電源オフの状態からミラーに用いているディスクが認識しない状態で起動しようとすると、LVMの中にあるルートファイルシステムをマウントできず、initramfsのシェルが起動します。この場合はシェルで手動でLVをアクティベートしてOSを起動する必要があります。
+
+```txt
+Gave up waiting for suspend/resume device
+Gave up waiting for root file system device.  Common problems:
+ - Boot args (cat /proc/cmdline)
+   - Check rootdelay= (did the system wait long enough?)
+ - Missing modules (cat /proc/modules: ls /dev)
+ALERT! /dev/mapper/debian--vg-root does not exist.  Dropping to a shell!
+
+BusyBox v1.35.0 (Debian 1:1.35.0-4+b3) built-in shell (ash)
+Enter 'help' for a list of built-in commands.
+
+(initramfs) vgchange -ay
+  WARNING: Couldn't find device with uuid 3RqGP2-2w3s-BIv-7UMy-7v2j-FmE9k1.
+  WARNING: VG debian-vg is missing PV 3RqGP2-2w3s-BIv-7UMy-7v2j-FmE9k1 (last written to /dev/sda1).
+  /sbin/dmeventd: stat failed: No such file or directory
+  WARNING: Failed to monitor debian-vg/root.
+  1 logical volume(s) in volume group "debian-vg" now active
+(initramfs) exit
+```
+
 ## まとめ
 
 ディスクの故障に強く、復旧も簡単な環境がLVMだけで作れてしまうのは凄いですね。今回は仮想環境での実験となりましたが、近いうちに自宅のマシンにもセットアップしていきたいと思います。
@@ -472,4 +496,5 @@ root@debian:~# lvs -a -o name,copy_percent,devices debian-vg
 
 - [第6章 RAID 論理ボリュームの設定 Red Hat Enterprise Linux 9 | Red Hat Customer Portal](https://access.redhat.com/documentation/ja-jp/red_hat_enterprise_linux/9/html/configuring_and_managing_logical_volumes/configuring-raid-logical-volumes_configuring-and-managing-logical-volumes)
 - [Create Mirrored Logical Volume in Linux [Step-by-Step] | GoLinuxCloud](https://www.golinuxcloud.com/create-mirrored-logical-volume-in-linux/)
+- [boot - Can't find LVM root dropped back to initramfs - Ask Ubuntu](https://askubuntu.com/questions/551446/cant-find-lvm-root-dropped-back-to-initramfs)
 
