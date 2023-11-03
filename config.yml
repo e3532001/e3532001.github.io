@@ -19,6 +19,11 @@ params:
     disableHLJS: true
   mainSections:
     - archives
+  socialIcons:
+    - name: email
+      url: "mailto:e2318501@outlook.com"
+    - name: rss
+      url: "index.xml"
 
 menu:
   main:
